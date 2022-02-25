@@ -46,7 +46,7 @@ class BottomButtonsRow extends StatelessWidget {
                 onPressed: () {
                   onSwipe(SwipeDirection.up);
                 },
-                child: const Icon(Icons.arrow_upward),
+                child: const Icon(Icons.question_mark),
               ),
               _BottomButton(
                 color: SwipeDirectionColor.right,
