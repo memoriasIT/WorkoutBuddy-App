@@ -9,12 +9,58 @@ class SampleItemDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Item Details'),
-      ),
-      body: const Center(
-        child: Text('More Information Here'),
-      ),
-    );
+            appBar: AppBar(
+              title: const Text('swipable_stack demo'),
+            ),
+            body: ListView(
+              children: [
+                ListTile(
+                  title: const Text('BasicExample'),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   BasicExample.route(),
+                    // );
+                  },
+                ),
+                ListTile(
+                  title: const Text('IgnoreVerticalSwipeExample'),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   IgnoreVerticalSwipeExample.route(),
+                    // );
+                  },
+                ),
+                ListTile(
+                  title: const Text('PopupOnSwipeExample'),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   PopupOnSwipeExample.route(),
+                    // );
+                  },
+                ),
+                ListTile(
+                  title: const Text('SwipeAnchorExample'),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   SwipeAnchorExample.route(),
+                    // );
+                  },
+                ),
+                ListTile(
+                  title: const Text('DetectableDirectionsExample'),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   DetectableDirectionsExample.route(),
+                    // );
+                  },
+                ),
+              ],
+            ),
+          );
   }
 }
