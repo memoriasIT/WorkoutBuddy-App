@@ -5,12 +5,12 @@ import 'bottom_buttons.dart';
 class ExerciseCard extends StatelessWidget {
   const ExerciseCard({
     required this.name,
-    required this.assetPath,
+    required this.url,
     Key? key,
   }) : super(key: key);
 
   final String name;
-  final String assetPath;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ExerciseCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
-                  image: new NetworkImage('https://docs.flutter.dev/assets/images/dash/dash-fainting.gif'),
+                  image: new NetworkImage(url),
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.4),
                       BlendMode.darken

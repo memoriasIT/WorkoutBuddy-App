@@ -95,7 +95,7 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                     final itemIndex = properties.index % _images.length;
                     return ExerciseCard(
                       name: 'Sample No.${itemIndex + 1}',
-                      assetPath: _images[itemIndex],
+                      url: 'https://docs.flutter.dev/assets/images/dash/dash-fainting.gif',
                     );
                   },
                 ),
