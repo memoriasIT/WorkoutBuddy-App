@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'bottom_buttons.dart';
 
-class ExampleCard extends StatelessWidget {
-  const ExampleCard({
+class ExerciseCard extends StatelessWidget {
+  const ExerciseCard({
     required this.name,
     required this.assetPath,
     Key? key,
@@ -23,7 +23,11 @@ class ExampleCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
-                  image: AssetImage(assetPath),
+                  image: new NetworkImage('https://docs.flutter.dev/assets/images/dash/dash-fainting.gif'),
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.4),
+                      BlendMode.darken
+                  ),
                   fit: BoxFit.cover,
                 ),
                 boxShadow: [

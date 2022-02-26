@@ -4,7 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 
 import 'widget/bottom_buttons.dart';
-import 'widget/card.dart';
+import 'widget/exercise_card.dart';
 import 'widget/card_overlay.dart';
 
 const _images = [
@@ -93,7 +93,7 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                   ),
                   builder: (context, properties) {
                     final itemIndex = properties.index % _images.length;
-                    return ExampleCard(
+                    return ExerciseCard(
                       name: 'Sample No.${itemIndex + 1}',
                       assetPath: _images[itemIndex],
                     );
