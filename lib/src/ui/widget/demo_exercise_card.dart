@@ -3,15 +3,13 @@ import 'package:workoutbuddy/src/data/models/exercises/exercise.dart';
 
 import 'bottom_buttons.dart';
 
-class ExerciseCard extends StatelessWidget {
-  const ExerciseCard({
+class DemoExerciseCard extends StatelessWidget {
+  const DemoExerciseCard({
     required this.url,
-    required this.exercise,
     Key? key,
   }) : super(key: key);
 
   final String url;
-  final Exercise exercise;
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +17,17 @@ class ExerciseCard extends StatelessWidget {
     return ClipRRect(
       child: Stack(
         children: [
-          Container(
-              color: Colors.blueGrey
-          ),
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
-                  image: NetworkImage(exercise.getMainImage?.url ?? "https://wallpaperaccess.com/full/3898677.jpg"),
+                  image: NetworkImage(url),
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.4),
                       BlendMode.darken
                   ),
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.cover,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -72,26 +67,8 @@ class ExerciseCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  exercise.name,
+                  "UP: don't understand.\n RIGHT: like.\n LEFT: dislike.\nDOWN: repeated.",
                   style: theme.textTheme.headline3!.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'Category: ' + exercise.categoryObj.name,
-                  style: theme.textTheme.headline5!.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'Muscles: ' + exercise.muscles.join(", "),
-                  style: theme.textTheme.headline6!.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  exercise.description,
-                  style: theme.textTheme.headline6!.copyWith(
                     color: Colors.white,
                   ),
                 ),

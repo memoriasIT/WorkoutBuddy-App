@@ -1,14 +1,18 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import 'package:translator/translator.dart';
 import 'package:workoutbuddy/src/data/repositories/exercise_repository.dart';
 
 import '../data/models/exercises/exercise.dart';
 import 'widget/bottom_buttons.dart';
+import 'widget/demo_exercise_card.dart';
 import 'widget/exercise_card.dart';
 import 'widget/card_overlay.dart';
 
@@ -36,6 +40,23 @@ class PopupOnSwipeExample extends StatefulWidget {
 class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
   late final SwipableStackController _controller;
   int globalItemIndex = 0;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  CollectionReference ratings = FirebaseFirestore.instance.collection('ratings');
+
+
+  Future<void> addRating(int itemId, String swipe, {double rating = 0}) {
+    return ratings
+        .add({
+          'userId': auth.currentUser?.uid ?? 0,
+          'itemId': itemId,
+          'swipe': swipe,
+          'rating': rating,
+          'timestamp': FieldValue.serverTimestamp(),
+        })
+        .then((value) => print("Rating Added"))
+        .catchError((error) => print("Failed to add rating: $error"));
+  }
 
   void _listenController() {
     setState(() {});
@@ -43,8 +64,8 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((value) => _getData(value.getInt('globalItemIndexKey') ?? 0));
     super.initState();
-    _getData(globalItemIndex);
     _controller = SwipableStackController()..addListener(_listenController);
   }
 
@@ -72,17 +93,23 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                   controller: _controller,
                   stackClipBehaviour: Clip.none,
                   onWillMoveNext: (index, direction) {
+                    double? rating;
                     switch (direction) {
                       case SwipeDirection.right:
                         Future(() async {
-                          await _PopUp.show(context: context);
+                          rating = await _PopUp.show(context: context);
+                          if (rating == null) {
+                            return false;
+                          }
+                          addRating(repo.items[globalItemIndex].id, direction.name, rating: rating!);
+                          return true;
                         });
-                        return true;
+                        return false;
                       case SwipeDirection.left:
-                        return true;
                       case SwipeDirection.up:
                       case SwipeDirection.down:
-                        return false;
+                        addRating(repo.items[globalItemIndex].id, direction.name);
+                        return true;
                     }
                   },
                   onSwipeCompleted: (index, direction) {
@@ -91,6 +118,7 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                     }
                     _getData(index);
                     globalItemIndex++;
+                    SharedPreferences.getInstance().then((value) => value.setInt('globalItemIndexKey', globalItemIndex));
                   },
                   horizontalSwipeThreshold: 0.8,
                   verticalSwipeThreshold: 0.8,
@@ -104,7 +132,9 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                   ),
                   builder: (context, properties) {
                     if (repo.items.isEmpty) {
-                      return Text("UP: unknown. RIGHT: like. LEFT: dislike.");
+                      return const DemoExerciseCard(
+                        url: "https://wallpaperaccess.com/full/3898677.jpg",
+                      );
                     }
                     // if (repo.items.length > properties.index) {
                     //   return FutureBuilder<Exercise>(
@@ -157,12 +187,13 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
 }
 
 class _PopUp {
-  const _PopUp._();
+  _PopUp._();
 
-  static Future<void> show({
+  static Future<double?> show({
     required BuildContext context,
   }) async {
-    await showDialog<void>(
+    double rating = 5;
+    return await showDialog<double>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Give your opinion'),
@@ -199,8 +230,9 @@ class _PopUp {
             }
             return Container();
           },
-          onRatingUpdate: (rating) {
-            print(rating);
+          onRatingUpdate: (ratingTemp) {
+            print(ratingTemp);
+            rating = ratingTemp;
           },
         ),
         actions: [
@@ -213,7 +245,7 @@ class _PopUp {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(rating);
             },
             child: const Text('Rate'),
           ),
