@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:workoutbuddy/src/data/models/exercises/exercise.dart';
 
 import 'bottom_buttons.dart';
 
 class ExerciseCard extends StatelessWidget {
   const ExerciseCard({
-    required this.name,
     required this.url,
+    required this.exercise,
     Key? key,
   }) : super(key: key);
 
-  final String name;
   final String url;
+  final Exercise exercise;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class ExerciseCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
-                  image: new NetworkImage(url),
+                  image: NetworkImage(exercise.getMainImage?.url ?? "https://wallpaperaccess.com/full/3898677.jpg"),
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.4),
                       BlendMode.darken
@@ -68,11 +69,30 @@ class ExerciseCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  exercise.name,
+                  style: theme.textTheme.headline3!.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Category: ' + exercise.categoryObj.name,
+                  style: theme.textTheme.headline5!.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Muscles: ' + exercise.muscles.join(", "),
                   style: theme.textTheme.headline6!.copyWith(
                     color: Colors.white,
                   ),
                 ),
+                Text(
+                  exercise.description,
+                  style: theme.textTheme.headline6!.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+
                 const SizedBox(height: BottomButtonsRow.height)
               ],
             ),

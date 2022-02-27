@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:swipable_stack/swipable_stack.dart';
+import 'package:translator/translator.dart';
+import 'package:workoutbuddy/src/data/repositories/exercise_repository.dart';
 
+import '../data/models/exercises/exercise.dart';
 import 'widget/bottom_buttons.dart';
 import 'widget/exercise_card.dart';
 import 'widget/card_overlay.dart';
@@ -30,6 +35,7 @@ class PopupOnSwipeExample extends StatefulWidget {
 
 class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
   late final SwipableStackController _controller;
+  int globalItemIndex = 0;
 
   void _listenController() {
     setState(() {});
@@ -38,6 +44,7 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
   @override
   void initState() {
     super.initState();
+    _getData(globalItemIndex);
     _controller = SwipableStackController()..addListener(_listenController);
   }
 
@@ -49,10 +56,12 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
       ..dispose();
   }
 
+  ExercisesRepository repo = ExercisesRepository([]);
+
   @override
   Widget build(BuildContext context) {
-    const pointCount = 10;
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Stack(
           children: [
@@ -68,7 +77,7 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                         Future(() async {
                           await _PopUp.show(context: context);
                         });
-                        return false;
+                        return true;
                       case SwipeDirection.left:
                         return true;
                       case SwipeDirection.up:
@@ -80,6 +89,8 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                     if (kDebugMode) {
                       print('$index, $direction');
                     }
+                    _getData(index);
+                    globalItemIndex++;
                   },
                   horizontalSwipeThreshold: 0.8,
                   verticalSwipeThreshold: 0.8,
@@ -92,9 +103,28 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
                     direction: properties.direction,
                   ),
                   builder: (context, properties) {
-                    final itemIndex = properties.index % _images.length;
+                    if (repo.items.isEmpty) {
+                      return Text("UP: unknown. RIGHT: like. LEFT: dislike.");
+                    }
+                    // if (repo.items.length > properties.index) {
+                    //   return FutureBuilder<Exercise>(
+                    //     future: _getData(globalItemIndex),
+                    //     builder: (
+                    //       BuildContext context,
+                    //       AsyncSnapshot<Exercise> snapshot,
+                    //     ) {
+                    //       if (!snapshot.hasData) {
+                    //         return const CircularProgressIndicator();
+                    //       } else if (snapshot.hasError) {}
+                    //       return ExerciseCard(
+                    //         name: 'Item. ${snapshot.data?.name}',
+                    //         url: 'https://docs.flutter.dev/assets/images/dash/dash-fainting.gif',
+                    //       );
+                    //     },
+                    //   );
+                    // }
                     return ExerciseCard(
-                      name: 'Sample No.${itemIndex + 1}',
+                      exercise: repo.items[properties.index],
                       url: 'https://docs.flutter.dev/assets/images/dash/dash-fainting.gif',
                     );
                   },
@@ -112,6 +142,17 @@ class _PopupOnSwipeExampleState extends State<PopupOnSwipeExample> {
         ),
       ),
     );
+  }
+
+  Future<Exercise> _getData(int itemIndex) async {
+    for (var i = 1; i < 10; i++) {
+      try {
+        await repo.fetchAndSetExercise(itemIndex + i);
+      } catch (e) {}
+    }
+    print(globalItemIndex);
+    // return Exercise(id: 1, uuid: "1", creationDate: DateTime.now(), name: "test", description: "test");
+    return repo.items[globalItemIndex];
   }
 }
 
